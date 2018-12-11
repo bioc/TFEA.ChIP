@@ -794,7 +794,11 @@ get_chip_index <- function(encodeFilter = FALSE, TFfilter = NULL) {
         Index <- dplyr::select(MetaData, "Accession", "TF")
         Index <- Index[Index$TF %in% TFfilter, ]
         if (encodeFilter == TRUE) {
-            Index <- Index[grepl("^wg.*", Index$Accession), ]
+            if (any(grepl("^wg.*", Index$Accession))){
+                Index <- Index[grepl("^wg", Index$Accession), ]
+            } else {
+                Index <- Index[grepl("^ENC", Index$Accession), ]
+            }
         }
     }
 
