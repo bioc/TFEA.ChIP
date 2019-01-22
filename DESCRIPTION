@@ -16,7 +16,7 @@ Imports: GenomicRanges, IRanges, biomaRt, GenomicFeatures, grDevices,
 Suggests: knitr, rmarkdown, S4Vectors, plotly, scales, tidyr, ggplot2,
         GSEABase, DESeq2, BiocGenerics
 VignetteBuilder: knitr
-biocViews: Transcription, GeneRegulation, GeneSetEnrichment,
+biocViews: ImmunoOncology, Transcription, GeneRegulation, GeneSetEnrichment,
         Transcriptomics, Sequencing, ChIPSeq, RNASeq
 NeedsCompilation: no
 Packaged: 2017-11-14 08:47:43 UTC; laura
