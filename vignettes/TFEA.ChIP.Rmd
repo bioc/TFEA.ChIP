@@ -1,8 +1,8 @@
 ---
 title: "TFEA.ChIP: a tool kit for transcription factor enrichment"
 author:
-- name: Laura Puente-Santamaria
 - name: Yosra Berrouayel
+- name: Laura Puente-Santamaria
 - name: Luis del Peso
 date: "`r BiocStyle::doc_date()`"
 vignette: >
