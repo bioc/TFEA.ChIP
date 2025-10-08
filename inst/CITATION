@@ -1,12 +1,11 @@
 bibentry(bibtype = "Article",
-         title = "TFEA.ChIP: a tool kit for transcription factor binding site enrichment analysis capitalizing on ChIP-seq datasets",
-         author = c(person("Laura", "Puente-Santamaria"),
-                    person("Wyeth", "Wasserman"),
-                    person("Luis", "del Peso") ),
-         journal = "Bioinformatics",
-         year = "2019",
+         title = "Enhancing TFEA.ChIP with ENCODE Regulatory Maps for Generalizable Transcription Factor Enrichment",
+         author = c(person("Yosra", "Berrouayel"),
+                    person("Luis", "del Peso")),
+         journal = "bioRxiv",
+         year = "2025",
          month = "07",
-         issn = "1367-4803",
-         url = "https://doi.org/10.1093/bioinformatics/btz573",
-         doi = "10.1093/bioinformatics/btz573"
+         url = "https://doi.org/10.1101/2025.07.28.667192",
+         doi = "10.1101/2025.07.28.667192"
          )
+         
