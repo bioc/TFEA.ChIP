@@ -504,6 +504,7 @@ preprocessInputData <- function(inputData, mode = "h2h" ) {
     return(Table)
     
   } else if ( methods::is(inputData, "data.frame") ) {
+    
     # Extracting data from a data frame
     # Checkig if all the necessary columns are present
     if (!(all(c("Genes", "pvalue", "log2FoldChange") %in% colnames(inputData))) && 
@@ -515,25 +516,38 @@ preprocessInputData <- function(inputData, mode = "h2h" ) {
       inputData$pval.adj <- p.adjust(inputData$pvalue,
                                      "fdr")
     }
+    
+    # remove NA rows
+    inputData <- na.omit(inputData)
+    
     # If Gene IDs aren't in Entrez Gene ID format or come from mouse genes.
     if ( ! all( grepl("^\\d*$", inputData$Genes)) | mode == "m2h" ) {
-      if( mode== "h2h" ){ inputData$Genes <- toupper( inputData$Genes ) }
-      inputData$Genes <- trimws( inputData$Genes )
-      genes <- suppressMessages( GeneID2entrez(
+      if (mode == "h2h") inputData$Genes <- toupper(inputData$Genes)
+      inputData$Genes <- trimws(sub("\\.\\d+$", "", inputData$Genes))  # remove Ensembl version
+      genes <- suppressMessages(GeneID2entrez(
         gene.IDs = inputData$Genes,
         mode,
         return.Matrix = TRUE))
       
       if (  mode %in% c("h2h","m2m")  ){
         genes <- genes[!is.na(genes$ENTREZ.ID), ]
-        inputData <- inputData[ inputData$Genes %in% genes$GENE.ID, ]
-        inputData$Symbol <- genes$GENE.ID
-        inputData$Genes <- genes$ENTREZ.ID
+        matched <- match(inputData$Genes, genes$GENE.ID)
+        inputData <- inputData[!is.na(matched), ]
+        inputData$Symbol <- genes$GENE.ID[matched[!is.na(matched)]]
+        inputData$Genes  <- genes$ENTREZ.ID[matched[!is.na(matched)]]
       }else{
         genes <- genes[!is.na(genes$human.gene.ID), ]
-        inputData <- inputData[ inputData$Genes %in% genes$mouse.gene.ID, ]
-        inputData$Symbol <- genes$mouse.gene.ID
-        inputData$Genes <- genes$human.gene.ID
+        if (all(grepl("^ENSM", inputData$Genes))) {
+          match_idx <- match(inputData$Genes, genes$mouse.gene.ID2)
+          symbol_col <- genes$mouse.gene.ID2
+        } else {
+          match_idx <- match(inputData$Genes, genes$mouse.gene.ID)
+          symbol_col <- genes$mouse.gene.ID
+        }
+        # Keep only matched rows
+        inputData <- inputData[!is.na(match_idx), ]
+        inputData$Symbol <- symbol_col[match_idx[!is.na(match_idx)]]
+        inputData$Genes  <- genes$human.gene.ID[match_idx[!is.na(match_idx)]]
       }
     }
     
@@ -724,9 +738,10 @@ GeneID2entrez <- function(gene.IDs, return.Matrix = FALSE, mode = "h2h") {
     
     # Return results in matrix or vector format
     if (return.Matrix) {
-      return(data.frame(GENE.ID = all.IDs$human_symbol,
-                        ENTREZ.ID = all.IDs$human_entrez,
-                        stringsAsFactors = FALSE))
+      return(data.frame(mouse.gene.ID = all.IDs$symbol,
+      			mouse.gene.ID2 = all.IDs$ensembl,
+                    	human.gene.ID = all.IDs$human_entrez,
+                    	stringsAsFactors = FALSE))
     } else {
       return(all.IDs$human_entrez)
     }
@@ -925,8 +940,8 @@ getCMstats <- function(CM_list, chip_index = get_chip_index()) {
   # Cap extreme values for distance calculation
   tmpOR <- statMat$OR
   tmpOR[is.infinite(tmpOR)] <- ifelse(statMat$OR == Inf, 
-                                   max(statMat$OR, na.rm = TRUE), 
-                                     min(statMat$OR, na.rm = TRUE))
+                                   max(statMat$OR, na.rm = TRUE)[1], 
+                                     min(statMat$OR, na.rm = TRUE)[1])
   
   # Calculate Euclidean distance
   statMat$distance <- sapply(seq_along(statMat$Accession), function(i) {
