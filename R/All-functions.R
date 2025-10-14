@@ -538,8 +538,12 @@ preprocessInputData <- function(inputData, mode = "h2h" ) {
       }else{
         genes <- genes[!is.na(genes$human.gene.ID), ]
         if (all(grepl("^ENSM", inputData$Genes))) {
-          match_idx <- match(inputData$Genes, genes$mouse.gene.ID2)
-          symbol_col <- genes$mouse.gene.ID2
+          match_idx <- match(inputData$Genes, genes$mouse.ensembl.ID)
+          symbol_col <- genes$mouse.ensembl.ID
+        } else if (all(grepl("^[0-9]+$", inputData$Genes))) {
+          # New: handle mouse Entrez IDs
+          match_idx <- match(inputData$Genes, genes$mouse.entrez.ID)
+          symbol_col <- genes$mouse.entrez.ID
         } else {
           match_idx <- match(inputData$Genes, genes$mouse.gene.ID)
           symbol_col <- genes$mouse.gene.ID
@@ -730,7 +734,7 @@ GeneID2entrez <- function(gene.IDs, return.Matrix = FALSE, mode = "h2h") {
   } else if (mode == "m2h") {
     
     # Obtain orthologs
-    all.IDs <- babelgene::orthologs(gene.IDs, species = 'mouse', human = FALSE)
+    all.IDs <- babelgene::orthologs(gene.IDs, species = 'mouse', human = FALSE, min_support = 1)
     
     # Message about the results
     message("Done! ", length(na.omit(all.IDs$entrez)), 
@@ -739,7 +743,8 @@ GeneID2entrez <- function(gene.IDs, return.Matrix = FALSE, mode = "h2h") {
     # Return results in matrix or vector format
     if (return.Matrix) {
       return(data.frame(mouse.gene.ID = all.IDs$symbol,
-      			mouse.gene.ID2 = all.IDs$ensembl,
+      			mouse.ensembl.ID = all.IDs$ensembl,
+      			mouse.entrez.ID = all.IDs$entrez,
                     	human.gene.ID = all.IDs$human_entrez,
                     	stringsAsFactors = FALSE))
     } else {
