@@ -1,5 +1,5 @@
 Package: TFEA.ChIP
-Version: 1.29.4
+Version: 1.30.0
 Title: TFEA.ChIP, a Tool Kit for Transcription Factor Enrichment
 Authors@R: c(person(given = "Yosra", family = "Berrouayel", email = "yosraberrouayel@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0768-5933")),
 	     person(given = "Laura", family = "Puente-Santamaria", email = "laura.puentes@estudiante.uam.es", role = c("aut")),
