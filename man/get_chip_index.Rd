@@ -4,26 +4,30 @@
 \alias{get_chip_index}
 \title{Creates df containing accessions of ChIP-Seq datasets and TF.}
 \usage{
-get_chip_index(encodeFilter = FALSE, TFfilter = NULL)
+get_chip_index(encodeFilter = FALSE, TFfilter = NULL, onlyTF = FALSE)
 }
 \arguments{
 \item{encodeFilter}{(Optional) If TRUE, only ENCODE ChIP-Seqs are
 included in the index.}
 
-\item{TFfilter}{(Optional) Transcription factors of interest.}
+\item{TFfilter}{(Optional) Transcriptional Regulators of interest.}
+
+\item{onlyTF}{(Optional) If TRUE, only Transcription Factors are
+included in the index.}
 }
 \value{
-Data frame containig the accession ID and TF for every ChIP-Seq
+Data frame containing the accession ID and TF for every ChIP-Seq
 experiment included in the metadata files.
 }
 \description{
 Function to create a data frame containing the ChIP-Seq
-dataset accession IDs and the transcription factor tested in each ChIP.
+dataset accession IDs and the transcriptional regulator tested in each ChIP.
 This index is used in functions like “contingency_matrix” and “GSEA_run”
-as a filter to select specific ChIPs or transcription factors to run an
+as a filter to select specific ChIPs or transcriptional regulators to run an
 analysis.
 }
 \examples{
 get_chip_index(encodeFilter = TRUE)
 get_chip_index(TFfilter=c('SMAD2','SMAD4'))
+get_chip_index(onlyTF=TRUE)
 }

@@ -4,7 +4,13 @@
 \alias{filter_expressed_TFs}
 \title{Filter Expressed TFs}
 \usage{
-filter_expressed_TFs(Table, chip_index, TFfilter = NULL, encodeFilter = FALSE)
+filter_expressed_TFs(
+  Table,
+  chip_index,
+  TFfilter = NULL,
+  onlyTF = FALSE,
+  encodeFilter = FALSE
+)
 }
 \arguments{
 \item{Table}{A data frame containing gene expression data with a `Genes` column.}
@@ -13,6 +19,9 @@ filter_expressed_TFs(Table, chip_index, TFfilter = NULL, encodeFilter = FALSE)
 and associated TFs.}
 
 \item{TFfilter}{(Optional) A character vector of TFs to filter.}
+
+\item{onlyTF}{(Optional) Logical; if TRUE, filter TFs and remove other
+types of transcriptional regulators.}
 
 \item{encodeFilter}{(Optional) Logical; if TRUE, applies ENCODE filtering 
 to ChIP-Seq data.}

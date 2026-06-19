@@ -18,6 +18,7 @@ analysis_from_table(
   expressed = TRUE,
   encodeFilter = FALSE,
   TFfilter = NULL,
+  onlyTF = FALSE,
   method = "ora"
 )
 }
@@ -42,11 +43,13 @@ analysis_from_table(
 
 \item{control_max_pval}{Maximum p-value for control genes.}
 
-\item{expressed}{Logical; filter TFs expressed in input data.}
+\item{expressed}{Logical; filter TRs expressed in input data.}
 
 \item{encodeFilter}{Logical; apply ENCODE filtering to ChIP-seq data.}
 
 \item{TFfilter}{Character vector of transcription factors to filter (optional).}
+
+\item{onlyTF}{Logical; filter TFs (optional).}
 
 \item{method}{Analysis method: 'ora' (overrepresentation) or 'gsea' (gene set enrichment).}
 }
@@ -55,7 +58,7 @@ A matrix with calculated statistics (e.g., p-values, odds ratios).
 }
 \description{
 Performs gene expression analysis, filtering genes and
-TFs based on specified thresholds. It calculates statistics using 
+TRs based on specified thresholds. It calculates statistics using 
 overrepresentation analysis (ORA) or gene set enrichment analysis (GSEA).
 }
 \examples{

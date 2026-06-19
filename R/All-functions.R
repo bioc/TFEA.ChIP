@@ -754,23 +754,26 @@ GeneID2entrez <- function(gene.IDs, return.Matrix = FALSE, mode = "h2h") {
 }
 
 
-get_chip_index <- function(encodeFilter = FALSE, TFfilter = NULL) {
+get_chip_index <- function(encodeFilter = FALSE, TFfilter = NULL, onlyTF = FALSE) {
   
   #' @title Creates df containing accessions of ChIP-Seq datasets and TF.
   #' @description Function to create a data frame containing the ChIP-Seq
-  #' dataset accession IDs and the transcription factor tested in each ChIP.
+  #' dataset accession IDs and the transcriptional regulator tested in each ChIP.
   #' This index is used in functions like “contingency_matrix” and “GSEA_run”
-  #' as a filter to select specific ChIPs or transcription factors to run an
+  #' as a filter to select specific ChIPs or transcriptional regulators to run an
   #' analysis.
   #' @param encodeFilter (Optional) If TRUE, only ENCODE ChIP-Seqs are
   #' included in the index.
-  #' @param TFfilter (Optional) Transcription factors of interest.
-  #' @return Data frame containig the accession ID and TF for every ChIP-Seq
+  #' @param TFfilter (Optional) Transcriptional Regulators of interest.
+  #' @param onlyTF (Optional) If TRUE, only Transcription Factors are
+  #' included in the index.
+  #' @return Data frame containing the accession ID and TF for every ChIP-Seq
   #' experiment included in the metadata files.
   #' @export get_chip_index
   #' @examples
   #' get_chip_index(encodeFilter = TRUE)
   #' get_chip_index(TFfilter=c('SMAD2','SMAD4'))
+  #' get_chip_index(onlyTF=TRUE)
   
   # Ensure MetaData is loaded
   if (!exists("MetaData", envir = globalenv())) {
@@ -779,7 +782,7 @@ get_chip_index <- function(encodeFilter = FALSE, TFfilter = NULL) {
   }
   
   # Select the relevant columns from MetaData
-  Index <- dplyr::select(MetaData, Accession, TF)
+  Index <- dplyr::select(MetaData, Accession, TF, TR.category)
   
   # Apply TF filter if provided
   if (!is.null(TFfilter)) {
@@ -789,6 +792,11 @@ get_chip_index <- function(encodeFilter = FALSE, TFfilter = NULL) {
   # Apply ENCODE filter if requested
   if (encodeFilter == TRUE) {
     Index <- Index[grepl("^wg|^ENC", Index$Accession), ]
+  }
+  
+  # Apply ENCODE filter if requested
+  if (onlyTF == TRUE) {
+    Index <- Index[Index$TR.category == 'TF', ]
   }
   
   # Check if any results are left, and return or stop with an error
@@ -944,9 +952,11 @@ getCMstats <- function(CM_list, chip_index = get_chip_index()) {
   
   # Cap extreme values for distance calculation
   tmpOR <- statMat$OR
-  tmpOR[is.infinite(tmpOR)] <- ifelse(statMat$OR == Inf, 
-                                   max(statMat$OR, na.rm = TRUE)[1], 
-                                     min(statMat$OR, na.rm = TRUE)[1])
+  
+  finite_or <- tmpOR[is.finite(tmpOR)]
+  
+  tmpOR[tmpOR == Inf]  <- max(finite_or, na.rm = TRUE)
+  tmpOR[tmpOR == -Inf] <- min(finite_or, na.rm = TRUE)
   
   # Calculate Euclidean distance
   statMat$distance <- sapply(seq_along(statMat$Accession), function(i) {
@@ -1825,7 +1835,8 @@ metaanalysis_fx <- function(dat) {
 }
 
 
-filter_expressed_TFs <- function(Table, chip_index, TFfilter = NULL, encodeFilter = FALSE) {
+filter_expressed_TFs <- function(Table, chip_index, TFfilter = NULL, 
+                                 onlyTF = FALSE, encodeFilter = FALSE) {
   
   #' @title Filter Expressed TFs
   #' @description Filters TFs based on their expression status in the input dataset.
@@ -1837,6 +1848,8 @@ filter_expressed_TFs <- function(Table, chip_index, TFfilter = NULL, encodeFilte
   #' @param TFfilter (Optional) A character vector of TFs to filter.
   #' @param encodeFilter (Optional) Logical; if TRUE, applies ENCODE filtering 
   #' to ChIP-Seq data.
+  #' @param onlyTF (Optional) Logical; if TRUE, filter TFs and remove other
+  #'types of transcriptional regulators.
   #' @return A filtered `chip_index` data frame containing only expressed TFs.
   #' @export filter_expressed_TFs
   
@@ -1873,7 +1886,9 @@ filter_expressed_TFs <- function(Table, chip_index, TFfilter = NULL, encodeFilte
   }
   
   # Update chip index with filtered TFs
-  chip_index <- get_chip_index(TFfilter = filtered_tfs, encodeFilter = encodeFilter)
+  chip_index <- get_chip_index(TFfilter = filtered_tfs,
+                               encodeFilter = encodeFilter,
+                               onlyTF = onlyTF)
   
   return(chip_index)
 }
@@ -1890,11 +1905,12 @@ analysis_from_table <- function(inputData, mode = "h2h",
                                 expressed = TRUE,
                                 encodeFilter = FALSE,
                                 TFfilter = NULL,
+                                onlyTF = FALSE,
                                 method = "ora") {
   
   #' @title Analysis from Input Table
   #' @description Performs gene expression analysis, filtering genes and
-  #' TFs based on specified thresholds. It calculates statistics using 
+  #' TRs based on specified thresholds. It calculates statistics using 
   #' overrepresentation analysis (ORA) or gene set enrichment analysis (GSEA).
   #'
   #' @param inputData A data frame containing gene expression data.
@@ -1907,9 +1923,10 @@ analysis_from_table <- function(inputData, mode = "h2h",
   #' @param interest_max_pval Maximum p-value for genes of interest.
   #' @param control_min_pval Minimum p-value for control genes.
   #' @param control_max_pval Maximum p-value for control genes.
-  #' @param expressed Logical; filter TFs expressed in input data.
+  #' @param expressed Logical; filter TRs expressed in input data.
   #' @param encodeFilter Logical; apply ENCODE filtering to ChIP-seq data.
   #' @param TFfilter Character vector of transcription factors to filter (optional).
+  #' @param onlyTF Logical; filter TFs (optional).
   #' @param method Analysis method: 'ora' (overrepresentation) or 'gsea' (gene set enrichment).
   #' @return A matrix with calculated statistics (e.g., p-values, odds ratios).
   #' @export analysis_from_table
@@ -1935,7 +1952,7 @@ analysis_from_table <- function(inputData, mode = "h2h",
     data("chip_metadata", package = "TFEA.ChIP", envir = environment())
   }
   
-  # Filter TFs
+  # Filter TRs
   if (!is.null(TFfilter)) {
     TFfilter <- chip_metadata %>%
       filter(.data$tf.name %in% TFfilter) %>%
@@ -1944,12 +1961,14 @@ analysis_from_table <- function(inputData, mode = "h2h",
   
   # Retrieve chip index based on filters
   cat("Retrieving ChIP index...\n")
-  chip_index <- get_chip_index(TFfilter = TFfilter, encodeFilter = encodeFilter)
+  chip_index <- get_chip_index(TFfilter = TFfilter, encodeFilter = encodeFilter,
+                               onlyTF = onlyTF)
   
   # Filter for expressed TFs if required
   if (expressed) {
     cat("Filtering for expressed transcription factors...\n")
-    chip_index <- filter_expressed_TFs(Table, chip_index, TFfilter, encodeFilter)
+    chip_index <- filter_expressed_TFs(Table, chip_index, TFfilter, 
+                                       encodeFilter, onlyTF)
   }
   
   # Perform analysis

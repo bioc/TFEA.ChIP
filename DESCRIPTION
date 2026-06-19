@@ -1,8 +1,8 @@
 Package: TFEA.ChIP
-Version: 1.33.0
+Version: 1.33.1
 Title: TFEA.ChIP, a Tool Kit for Transcription Factor Enrichment
 Authors@R: c(person(given = "Yosra", family = "Berrouayel", email = "yosraberrouayel@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-0768-5933")),
-	     person(given = "Laura", family = "Puente-Santamaria", email = "laura.puentes@estudiante.uam.es", role = c("aut")),
+	     person(given = "Laura", family = "Puente-Santamaria", email = "lpuente.iacs@aragon.es", role = c("aut")),
 	     person(given = "Luis", family = "del Peso", email = "lpeso@iib.uam.es", role = c("aut"), comment = c(ORCID = "0000-0003-4014-5688")))
 Imports: GenomicRanges, IRanges, biomaRt, GenomicFeatures, GenomicRanges, grDevices,
         dplyr, stats, utils, R.utils, methods, org.Hs.eg.db, org.Mm.eg.db, rlang,
@@ -37,10 +37,10 @@ Description: Package to analyze transcription factor enrichment in a gene set us
 Depends: R (>= 4.2.0)
 License: Artistic-2.0
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 LazyData: true
 LazyDataCompression: xz
-VignetteBuilder: knitr, BiocStyle
+VignetteBuilder: knitr
 biocViews: Transcription, GeneRegulation, GeneSetEnrichment,
         Transcriptomics, Sequencing, ChIPSeq, RNASeq, ImmunoOncology, 
         GeneExpression, ChipOnChip
