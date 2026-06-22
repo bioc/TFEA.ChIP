@@ -1967,8 +1967,13 @@ analysis_from_table <- function(inputData, mode = "h2h",
   # Filter for expressed TFs if required
   if (expressed) {
     cat("Filtering for expressed transcription factors...\n")
-    chip_index <- filter_expressed_TFs(Table, chip_index, TFfilter, 
-                                       encodeFilter, onlyTF)
+    chip_index <- filter_expressed_TFs(
+      Table = Table,
+      chip_index = chip_index,
+      TFfilter = TFfilter,
+      onlyTF = onlyTF,
+      encodeFilter = encodeFilter
+    )
   }
   
   # Perform analysis
