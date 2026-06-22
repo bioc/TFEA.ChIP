@@ -1,16 +1,18 @@
-bibentry(bibtype = "Article",
-         author = c(person("Yosra", "Berrouayel"),
-                    person("Luis", "del Peso")),
-    title = {Enhancing TFEA.ChIP with ENCODE regulatory maps for generalizable transcription factor enrichment},
-    journal = {Briefings in Bioinformatics},
-    volume = {27},
-    number = {1},
-    pages = {bbaf715},
-    year = {2026},
-    month = {01},
-    abstract = {Identifying transcription factors (TFs) responsible for gene expression changes remain a central challenge in functional genomics. TFEA.ChIP is a ChIP-seq-based TF enrichment analysis tool that addresses this by linking TF binding profiles to differentially expressed genes through experimentally supported cis-regulatory element (CRE)–gene associations. Unlike motif- or heuristic-based approaches, TFEA.ChIP adopts a biologically grounded strategy by intersecting TF binding data from ReMap2022 with regulatory maps from ENCODE’s rE2G and CREdb. To overcome the high context-specificity of rE2G associations, we developed filtering strategies based on confidence scores and recurrence across biosamples. Benchmarking on 342 curated gene sets from the Molecular Signatures Database C2 CGP collection showed that recurrence-based filtering significantly improved accuracy, outperforming the original GeneHancer-based implementation and leading tools including BARTv2.0, Lisa, ChEA3, and HOMER. A case study on hypoxia further validated the method, demonstrating accurate and pathway-specific enrichment of hypoxia-inducible factor-related TFs using both overrepresentation analysis and gene set enrichment analysis. Additionally, the updated implementation of TFEA.ChIP in R/Bioconductor introduces several user-friendly features, including automated analysis workflows and expression-based filtering of candidate TFs. These additions streamline the integration of TFEA.ChIP into standard RNA-seq analysis pipelines, enabling more efficient and reproducible workflows. Together with its strong benchmarking performance and biologically grounded framework, the updated tool provides a robust and accessible solution for inferring transcriptional regulators from gene expression data.},
-    issn = {1477-4054},
-    doi = {10.1093/bib/bbaf715},
-    url = {https://doi.org/10.1093/bib/bbaf715},
-    eprint = {https://academic.oup.com/bib/article-pdf/27/1/bbaf715/66386075/bbaf715.pdf},
-}
+bibentry(
+  bibtype = "Article",
+  author = c(
+    person("Yosra", "Berrouayel"),
+    person("Luis", "del Peso")
+  ),
+  title = "Enhancing TFEA.ChIP with ENCODE regulatory maps for generalizable transcription factor enrichment",
+  journal = "Briefings in Bioinformatics",
+  volume = "27",
+  number = "1",
+  pages = "bbaf715",
+  year = "2026",
+  month = "01",
+  issn = "1477-4054",
+  doi = "10.1093/bib/bbaf715",
+  url = "https://doi.org/10.1093/bib/bbaf715",
+  eprint = "https://academic.oup.com/bib/article-pdf/27/1/bbaf715/66386075/bbaf715.pdf"
+)
